@@ -1,4 +1,5 @@
 import util.ConexaoBanco;
+import view.MenuLogin;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -12,6 +13,12 @@ public class Main {
             e.printStackTrace();
         }
 
+        MenuLogin menu = new MenuLogin();
 
+        while (true) {
+            int opcao = menu.exibirMenu();
+            menu.executarOpcao(opcao);
+            if (opcao == 0) break;
+        }
     }
 }

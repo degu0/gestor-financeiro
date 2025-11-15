@@ -4,6 +4,8 @@ import model.*;
 import util.ConexaoBanco;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UsuarioService {
     // CREATE
@@ -51,6 +53,58 @@ public class UsuarioService {
 
         } catch (SQLException e) {
             System.err.println("Erro ao buscar usuário: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    public List<Usuario> listarUsuarios() {
+        String sql = "SELECT * FROM usuarios";
+        List<Usuario> usuarios = new ArrayList<>();
+
+        try (Connection conn = ConexaoBanco.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                Usuario u = new Usuario();
+                u.setId(rs.getInt("id"));
+                u.setNome(rs.getString("nome"));
+                u.setEmail(rs.getString("email"));
+                u.setSenha(rs.getString("senha"));
+                usuarios.add(u);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao listar usuários: " + e.getMessage());
+        }
+
+        return usuarios;
+    }
+
+
+    public Usuario login(Usuario u) {
+        String sql = "SELECT * FROM usuarios WHERE email = ? AND senha = ?";
+
+        try (Connection conn = ConexaoBanco.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, u.getEmail());
+            pstmt.setString(2, u.getSenha());
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                Usuario u2 = new Usuario();
+                u2.setId(rs.getInt("id"));
+                u2.setNome(rs.getString("nome"));
+                u2.setEmail(rs.getString("email"));
+
+                return u2;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         return null;
