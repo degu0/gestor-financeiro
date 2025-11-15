@@ -20,20 +20,17 @@ public class TransacaoService {
         try (Connection conn = ConexaoBanco.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            String tipo;
-            Categoria categoria;
-            if (t instanceof Despesa) {
-                tipo = "DESPESA";
-                categoria = ((Despesa) t).getCategoria();
-            } else {
-                tipo = "RECEITA";
-                categoria = ((Receita) t).getCategoria();
-            }
+            String tipo = (t instanceof Despesa) ? "DESPESA" : "RECEITA";
+            Categoria categoria = (t instanceof Despesa)
+                    ? ((Despesa) t).getCategoria()
+                    : ((Receita) t).getCategoria();
+
+            LocalDate data = (t.getData() == null) ? LocalDate.now() : t.getData();
 
             pstmt.setString(1, tipo);
             pstmt.setDouble(2, t.getValor());
             pstmt.setString(3, t.getDescricao());
-            pstmt.setString(4, t.getData().toString());
+            pstmt.setDate(4, Date.valueOf(data));
             pstmt.setString(5, categoria.name());
             pstmt.setInt(6, t.getIdUsuario());
 
@@ -53,27 +50,30 @@ public class TransacaoService {
     // --- READ ---
     public List<Transacao> listarTodasTransacoesUsuario(int idUsuario) {
         List<Transacao> transacoes = new ArrayList<>();
-        String sql = "SELECT * FROM transacoes WHERE idUsuario = ?";
+        String sql = "SELECT id, tipo, valor, descricao, data, categoria FROM transacoes WHERE idUsuario = ?";
 
         try (Connection conn = ConexaoBanco.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, idUsuario);
+
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    int id = rs.getInt("id");
+
                     String tipo = rs.getString("tipo");
                     double valor = rs.getDouble("valor");
                     String descricao = rs.getString("descricao");
-                    LocalDate data = LocalDate.parse(rs.getString("data"));
+
+                    LocalDate data = rs.getDate("data").toLocalDate();
                     Categoria categoria = Categoria.valueOf(rs.getString("categoria"));
 
                     Transacao t;
                     if (tipo.equalsIgnoreCase("RECEITA")) {
-                        t = new Receita(id, valor, descricao, data, categoria);
+                        t = new Receita(valor, descricao, data, categoria);
                     } else {
-                        t = new Despesa(id, valor, descricao, data, categoria);
+                        t = new Despesa(valor, descricao, data, categoria);
                     }
+
                     transacoes.add(t);
                 }
             }
@@ -81,31 +81,8 @@ public class TransacaoService {
         } catch (SQLException e) {
             System.err.println("Erro ao listar transações: " + e.getMessage());
         }
+
         return transacoes;
-    }
-
-    // --- UPDATE ---
-    public void atualizarTransacao(Transacao t) {
-        String sql = "UPDATE transacoes SET valor = ?, descricao = ?, data = ?, categoria = ? WHERE id = ?";
-
-        try (Connection conn = ConexaoBanco.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            Categoria categoria = (t instanceof Despesa)
-                    ? ((Despesa) t).getCategoria()
-                    : ((Receita) t).getCategoria();
-
-            pstmt.setDouble(1, t.getValor());
-            pstmt.setString(2, t.getDescricao());
-            pstmt.setString(3, t.getData().toString());
-            pstmt.setString(4, categoria.name());
-            pstmt.setInt(5, t.getId());
-
-            pstmt.executeUpdate();
-
-        } catch (SQLException e) {
-            System.err.println("Erro ao atualizar transação: " + e.getMessage());
-        }
     }
 
     // --- DELETE ---
@@ -126,14 +103,10 @@ public class TransacaoService {
     // --- RELATÓRIO ---
     public double calcularSaldoAtual(int idUsuario) {
         double saldo = 0;
-        List<Transacao> transacoes = listarTodasTransacoesUsuario(idUsuario);
 
-        for (Transacao t : transacoes) {
-            if (t instanceof Receita) {
-                saldo += t.getValor();
-            } else {
-                saldo -= t.getValor();
-            }
+        for (Transacao t : listarTodasTransacoesUsuario(idUsuario)) {
+            if (t instanceof Receita) saldo += t.getValor();
+            else saldo -= t.getValor();
         }
 
         return saldo;

@@ -29,22 +29,27 @@ public class MenuLogin {
         return opcao;
     }
 
-    public void executarOpcao(int opcaoUsuario) {
+    public Usuario executarOpcao(int opcaoUsuario) {
+
         switch (opcaoUsuario) {
             case 1:
                 cadastrarUsuario();
-                break;
+                return null;
+
             case 2:
-                fazerLogin();
-                break;
+                return fazerLogin();
+
             case 3:
                 listarUsuario();
-                break;
+                return null;
+
             case 0:
                 System.out.println("Obrigado e volte sempre!");
-                break;
+                return null;
+
             default:
                 System.out.println("Opção inválida!");
+                return null;
         }
     }
 
@@ -68,7 +73,7 @@ public class MenuLogin {
         }
     }
 
-    private void fazerLogin() {
+    private Usuario fazerLogin() {
         Usuario u = new Usuario();
 
         System.out.print("Digite o email do usuário: ");
@@ -81,11 +86,14 @@ public class MenuLogin {
             Usuario logado = usuarioService.login(u);
             if (logado != null) {
                 System.out.println("Login feito com sucesso! Bem-vindo " + logado.getNome());
+                return logado;
             } else {
                 System.out.println("Email ou senha inválidos!");
+                return null;
             }
         } catch (Exception e) {
             System.out.println("Erro ao tentar fazer login: " + e.getMessage());
+            return null;
         }
     }
 

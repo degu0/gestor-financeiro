@@ -13,8 +13,8 @@ public class Despesa extends Transacao {
     }
 
     // Construtor para LER despesa do banco (com ID e data)
-    public Despesa(int id, double valor, String descricao, LocalDate data, Categoria categoria) {
-        super(id, valor, descricao, data); // Chama o construtor completo de Transacao
+    public Despesa(double valor, String descricao, LocalDate data, Categoria categoria) {
+        super(valor, descricao, data); // Chama o construtor completo de Transacao
         this.categoria = categoria;
     }
 
@@ -35,8 +35,7 @@ public class Despesa extends Transacao {
     @Override
     public String toString() {
         return "Despesa {" +
-                "id=" + getId() +
-                ", valor=" + getValor() +
+                " valor=" + getValor() +
                 ", descricao='" + getDescricao() + '\'' +
                 ", data=" + getData() +
                 ", categoria=" + categoria +

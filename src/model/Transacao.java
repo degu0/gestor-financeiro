@@ -27,8 +27,7 @@ public class Transacao {
         this.idUsuario = idUsuario;
     }
 
-    public Transacao(int id, double valor, String descricao, LocalDate data) {
-        this.id = id;
+    public Transacao(double valor, String descricao, LocalDate data) {
         this.valor = valor;
         this.descricao = descricao;
     }

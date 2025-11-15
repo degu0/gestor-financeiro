@@ -13,8 +13,8 @@ public class Receita extends Transacao {
     }
 
     // Construtor para LER receita do banco (com ID e data)
-    public Receita(int id, double valor, String descricao, LocalDate data, Categoria categoria) {
-        super(id, valor, descricao, data); // chama o construtor completo de Transacao
+    public Receita(double valor, String descricao, LocalDate data, Categoria categoria) {
+        super(valor, descricao, data); // chama o construtor completo de Transacao
         this.categoria = categoria;
     }
 
@@ -35,8 +35,7 @@ public class Receita extends Transacao {
     @Override
     public String toString() {
         return "Receita {" +
-                "id=" + getId() +
-                ", valor=" + getValor() +
+                " valor=" + getValor() +
                 ", descricao='" + getDescricao() + '\'' +
                 ", data=" + getData() +
                 ", categoria=" + categoria +

@@ -7,52 +7,59 @@ import java.sql.Statement;
 
 public class ConexaoBanco {
 
-    private static final String URL = "jdbc:sqlite:financas.db";
+    private static final String URL = "jdbc:mysql://localhost:3306/GestorFinanceiro?useSSL=false&serverTimezone=UTC";
+    private static final String USER = "root";
+    private static final String PASSWORD = "rootMysql";
 
-    public static Connection getConnection() throws SQLException {
+    public static Connection getConnection() {
         try {
-            Class.forName("org.sqlite.JDBC");
-        } catch (ClassNotFoundException e) {
-            throw new SQLException("Driver JDBC do SQLite não encontrado.", e);
+            return DriverManager.getConnection(URL, USER, PASSWORD);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao conectar ao MySQL: " + e.getMessage());
         }
-        return DriverManager.getConnection(URL);
     }
 
     public static void criarTabelas() {
-        String sqlTransacoes = "CREATE TABLE IF NOT EXISTS transacoes (" +
-                " id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                " tipo TEXT NOT NULL," +
-                " valor REAL NOT NULL," +
-                " descricao TEXT," +
-                " data TEXT NOT NULL," +
-                " categoria TEXT NOT NULL," +
-                " idUsuario INTEGER NOT NULL," +
-                " FOREIGN KEY(idUsuario) REFERENCES usuarios(id)" +
-                ");";
+        String sqlUsuarios = """
+            CREATE TABLE IF NOT EXISTS usuarios (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                nome VARCHAR(100) NOT NULL,
+                email VARCHAR(100) NOT NULL,
+                senha VARCHAR(100) NOT NULL
+            ) ENGINE=InnoDB;
+        """;
 
-        String sqlOrcamentos = "CREATE TABLE IF NOT EXISTS orcamentos (" +
-                " id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                " categoria TEXT NOT NULL UNIQUE," +
-                " valorLimite REAL NOT NULL," +
-                " idUsuario INTEGER NOT NULL," +
-                " FOREIGN KEY(idUsuario) REFERENCES usuarios(id)" +
-                ");";
+        String sqlTransacoes = """
+            CREATE TABLE IF NOT EXISTS transacoes (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                tipo VARCHAR(20) NOT NULL,
+                valor DOUBLE NOT NULL,
+                descricao VARCHAR(255),
+                data DATE NOT NULL,
+                categoria VARCHAR(50) NOT NULL,
+                idUsuario INT NOT NULL,
+                FOREIGN KEY (idUsuario) REFERENCES usuarios(id)
+            ) ENGINE=InnoDB;
+        """;
 
-        String sqlUsuarios = "CREATE TABLE IF NOT EXISTS usuarios(" +
-                " id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                " nome TEXT NOT NULL," +
-                " email TEXT NOT NULL," +
-                " senha TEXT NOT NULL" +
-                ");";
+        String sqlOrcamentos = """
+            CREATE TABLE IF NOT EXISTS orcamentos (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                categoria VARCHAR(50) NOT NULL UNIQUE,
+                valorLimite DOUBLE NOT NULL,
+                idUsuario INT NOT NULL,
+                FOREIGN KEY (idUsuario) REFERENCES usuarios(id)
+            ) ENGINE=InnoDB;
+        """;
 
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
 
+            stmt.execute(sqlUsuarios);
             stmt.execute(sqlTransacoes);
             stmt.execute(sqlOrcamentos);
-            stmt.execute(sqlUsuarios);
-            System.out.println("Tabelas verificadas/criadas com sucesso.");
 
+            System.out.println("Tabelas verificadas/criadas com sucesso.");
         } catch (SQLException e) {
             System.err.println("Erro ao criar as tabelas: " + e.getMessage());
         }
