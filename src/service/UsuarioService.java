@@ -111,7 +111,7 @@ public class UsuarioService {
     }
 
 
-    // --- CRUD: Update ---
+    // UPDATE
     public void atualizarInformacoesUsuario(Usuario u) {
         String sql = "UPDATE usuarios SET nome = ?, email = ? WHERE id = ?";
 
@@ -128,7 +128,7 @@ public class UsuarioService {
         }
     }
 
-    // --- CRUD: Delete ---
+    // DELETE
     public void deletarUsuario(int id) {
         String sql = "DELETE FROM usuarios WHERE id = ?";
 

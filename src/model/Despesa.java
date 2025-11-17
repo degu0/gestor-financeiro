@@ -6,24 +6,21 @@ public class Despesa extends Transacao {
 
     private Categoria categoria;
 
-    // Construtor para CRIAR nova despesa (sem ID e data)
     public Despesa(double valor, String descricao, Categoria categoria) {
-        super(valor, descricao); // Chama o construtor da classe Transacao
+        super(valor, descricao);
         this.categoria = categoria;
     }
 
-    // Construtor para LER despesa do banco (com ID e data)
     public Despesa(double valor, String descricao, LocalDate data, Categoria categoria) {
-        super(valor, descricao, data); // Chama o construtor completo de Transacao
+        super(valor, descricao, data);
         this.categoria = categoria;
     }
 
     @Override
     public String getTipo() {
-        return "DESPESA"; // padronizado para coincidir com o valor salvo no banco
+        return "DESPESA";
     }
 
-    // Getters e Setters
     public Categoria getCategoria() {
         return categoria;
     }
@@ -35,6 +32,7 @@ public class Despesa extends Transacao {
     @Override
     public String toString() {
         return "Despesa {" +
+                "id=" + getId() +
                 " valor=" + getValor() +
                 ", descricao='" + getDescricao() + '\'' +
                 ", data=" + getData() +

@@ -8,10 +8,6 @@ public class Usuario {
     private String senha;
 
     public Usuario() {
-        this.id = id;
-        this.nome = nome;
-        this.email = email;
-        this.senha = senha;
     }
 
     public int getId() {
@@ -41,5 +37,14 @@ public class Usuario {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    @Override
+    public String toString() {
+        return "Usuario {" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

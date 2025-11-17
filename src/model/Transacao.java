@@ -2,7 +2,7 @@ package model;
 
 import java.time.LocalDate;
 
-public class Transacao {
+public abstract class Transacao {
 
     private int id;
     private double valor;
@@ -30,12 +30,11 @@ public class Transacao {
     public Transacao(double valor, String descricao, LocalDate data) {
         this.valor = valor;
         this.descricao = descricao;
+        this.data = data;
     }
 
 
-    public String getTipo(){
-        return this.descricao;
-    };
+    public abstract String getTipo();
 
     public int getId(){
         return id;

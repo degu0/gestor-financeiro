@@ -13,7 +13,7 @@ import java.util.List;
 
 public class TransacaoService {
 
-    // --- CREATE ---
+    // CREATE
     public void salvarNovaTransacao(Transacao t) {
         String sql = "INSERT INTO transacoes(tipo, valor, descricao, data, categoria, idUsuario) VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -47,7 +47,7 @@ public class TransacaoService {
         }
     }
 
-    // --- READ ---
+    // READ
     public List<Transacao> listarTodasTransacoesUsuario(int idUsuario) {
         List<Transacao> transacoes = new ArrayList<>();
         String sql = "SELECT id, tipo, valor, descricao, data, categoria FROM transacoes WHERE idUsuario = ?";
@@ -85,7 +85,7 @@ public class TransacaoService {
         return transacoes;
     }
 
-    // --- DELETE ---
+    // DELETE
     public void deletarTransacao(int id) {
         String sql = "DELETE FROM transacoes WHERE id = ?";
 
@@ -100,7 +100,7 @@ public class TransacaoService {
         }
     }
 
-    // --- RELATÓRIO ---
+    // RELATÓRIO
     public double calcularSaldoAtual(int idUsuario) {
         double saldo = 0;
 
