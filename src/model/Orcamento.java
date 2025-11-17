@@ -6,14 +6,11 @@ public class Orcamento {
     private Categoria categoria;
     private double valorLimite;
 
-    // --- Construtor para CRIAR novo orçamento ---
     public Orcamento(Categoria categoria, double valorLimite) {
         validarValor(valorLimite);
         this.categoria = categoria;
         this.valorLimite = valorLimite;
     }
-
-    // --- Construtor para LER orçamento do banco ---
     public Orcamento(int id, Categoria categoria, double valorLimite) {
         validarValor(valorLimite);
         this.id = id;
@@ -21,7 +18,6 @@ public class Orcamento {
         this.valorLimite = valorLimite;
     }
 
-    // --- Getters e Setters ---
     public int getId() {
         return id;
     }
@@ -47,7 +43,6 @@ public class Orcamento {
         this.valorLimite = valorLimite;
     }
 
-    // --- Validação interna ---
     private void validarValor(double valor) {
         if (valor <= 0) {
             throw new IllegalArgumentException("O valor limite deve ser positivo.");

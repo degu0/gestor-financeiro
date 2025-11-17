@@ -53,7 +53,7 @@ public class MenuTransacao {
                     break;
 
                 case 4:
-                    deletarTransacao();
+                    deletarTransacao(idUsuarioLogado);
                     break;
 
                 case 0:
@@ -139,8 +139,18 @@ public class MenuTransacao {
         System.out.println("Saldo atual: R$ " + saldo);
     }
 
-    private void deletarTransacao() {
+    private void deletarTransacao(int idUsuario) {
         System.out.print("Digite o ID da transação a deletar: ");
+        List<Transacao> lista = transacaoService.listarTodasTransacoesUsuario(idUsuario);
+
+        if (lista.isEmpty()) {
+            System.out.println("Nenhuma transação cadastrada.");
+            return;
+        }
+        System.out.println("\n=== Lista de Transações ===");
+        for (Transacao t : lista) {
+            System.out.println(t);
+        }
 
         while (!input.hasNextInt()) {
             System.out.println("Digite um número válido!");

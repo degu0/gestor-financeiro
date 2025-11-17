@@ -6,24 +6,21 @@ public class Receita extends Transacao {
 
     private Categoria categoria;
 
-    // Construtor para CRIAR nova receita (sem ID e data)
     public Receita(double valor, String descricao, Categoria categoria) {
-        super(valor, descricao); // chama o construtor da classe Transacao
+        super(valor, descricao);
         this.categoria = categoria;
     }
 
-    // Construtor para LER receita do banco (com ID e data)
     public Receita(double valor, String descricao, LocalDate data, Categoria categoria) {
-        super(valor, descricao, data); // chama o construtor completo de Transacao
+        super(valor, descricao, data);
         this.categoria = categoria;
     }
 
     @Override
     public String getTipo() {
-        return "RECEITA"; // mantém o padrão em caixa alta usado no banco
+        return "RECEITA";
     }
 
-    // Getters e Setters
     public Categoria getCategoria() {
         return categoria;
     }
@@ -35,6 +32,7 @@ public class Receita extends Transacao {
     @Override
     public String toString() {
         return "Receita {" +
+                "id=" + getId() +
                 " valor=" + getValor() +
                 ", descricao='" + getDescricao() + '\'' +
                 ", data=" + getData() +
