@@ -12,7 +12,7 @@ public class Despesa extends Transacao {
     }
 
     public Despesa(double valor, String descricao, LocalDate data, Categoria categoria) {
-        super(valor, descricao, data);
+        super(valor, descricao, data); 
         this.categoria = categoria;
     }
 

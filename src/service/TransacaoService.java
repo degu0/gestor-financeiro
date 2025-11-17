@@ -59,7 +59,6 @@ public class TransacaoService {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-
                     String tipo = rs.getString("tipo");
                     double valor = rs.getDouble("valor");
                     String descricao = rs.getString("descricao");
