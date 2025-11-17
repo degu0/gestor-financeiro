@@ -59,6 +59,7 @@ public class TransacaoService {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
+                    int idDoBanco = rs.getInt("id");
                     String tipo = rs.getString("tipo");
                     double valor = rs.getDouble("valor");
                     String descricao = rs.getString("descricao");
@@ -68,9 +69,9 @@ public class TransacaoService {
 
                     Transacao t;
                     if (tipo.equalsIgnoreCase("RECEITA")) {
-                        t = new Receita(valor, descricao, data, categoria);
+                        t = new Receita(idDoBanco, valor, descricao, data, categoria);
                     } else {
-                        t = new Despesa(valor, descricao, data, categoria);
+                        t = new Despesa(idDoBanco, valor, descricao, data, categoria);
                     }
 
                     transacoes.add(t);

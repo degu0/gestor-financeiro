@@ -6,13 +6,15 @@ public class Despesa extends Transacao {
 
     private Categoria categoria;
 
-    public Despesa(double valor, String descricao, Categoria categoria) {
-        super(valor, descricao);
+    public Despesa(double valor, String descricao,  LocalDate data, Categoria categoria) {
+        super(valor, descricao, data);
         this.categoria = categoria;
     }
 
-    public Despesa(double valor, String descricao, LocalDate data, Categoria categoria) {
+    public Despesa(int id, double valor, String descricao, LocalDate data, Categoria categoria) {
         super(valor, descricao, data); 
+
+        this.setId(id);
         this.categoria = categoria;
     }
 
