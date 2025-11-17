@@ -112,9 +112,9 @@ public class MenuTransacao {
         LocalDate hoje = LocalDate.now();
 
         if (tipo.equals("despesa")) {
-            t = new Despesa(valor, descricao, hoje, categoria);
+            t = new Despesa( valor, descricao, hoje, categoria);
         } else {
-            t = new Receita(valor, descricao, hoje, categoria);
+            t = new Receita( valor, descricao, hoje, categoria);
         }
 
         t.setIdUsuario(idUsuario);

@@ -6,13 +6,15 @@ public class Receita extends Transacao {
 
     private Categoria categoria;
 
-    public Receita(double valor, String descricao, Categoria categoria) {
-        super(valor, descricao);
+    public Receita(double valor, String descricao,  LocalDate data,  Categoria categoria) {
+        super(valor, descricao, data);
         this.categoria = categoria;
     }
 
-    public Receita(double valor, String descricao, LocalDate data, Categoria categoria) {
+    public Receita(int id, double valor, String descricao, LocalDate data, Categoria categoria) {
         super(valor, descricao, data);
+
+        this.setId(id);
         this.categoria = categoria;
     }
 
