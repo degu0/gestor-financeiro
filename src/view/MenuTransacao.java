@@ -18,9 +18,10 @@ public class MenuTransacao {
         System.out.println("\n=== Transações ===");
         System.out.println("1 - Cadastrar nova transação");
         System.out.println("2 - Cadastrar novo orçamento");
-        System.out.println("3 - Listar transações");
-        System.out.println("4 - Relatório (saldo)");
-        System.out.println("5 - Deletar transação");
+        System.out.println("3 - Alterar um orçamento");
+        System.out.println("4 - Listar transações");
+        System.out.println("5 - Relatório (saldo)");
+        System.out.println("6 - Deletar transação");
         System.out.println("0 - Voltar");
         System.out.print("Escolha a opção: ");
 
@@ -49,14 +50,18 @@ public class MenuTransacao {
                     break;
 
                 case 3:
-                    listarTransacoes(idUsuarioLogado);
+                    updateOrcamento(idUsuarioLogado);
                     break;
 
                 case 4:
-                    gerarRelatorio(idUsuarioLogado);
+                    listarTransacoes(idUsuarioLogado);
                     break;
 
                 case 5:
+                    gerarRelatorio(idUsuarioLogado);
+                    break;
+
+                case 6:
                     deletarTransacao(idUsuarioLogado);
                     break;
 
@@ -162,6 +167,53 @@ public class MenuTransacao {
             System.out.println("Erro ao cadastrar orçamento: " + e.getMessage());
         }
     }
+
+    private void updateOrcamento(int idUsuario) {
+        List<Orcamento> categoriasDisponiveis = orcamentoService.listarCategoriasCadastradas(idUsuario);
+
+        System.out.println("=== Update do Orçamento ===");
+
+        if (categoriasDisponiveis.isEmpty()) {
+            System.out.println("Nenhum orçamento cadastrado para atualizar.");
+            return;
+        }
+
+        System.out.println("Categorias disponíveis:");
+        for (Orcamento o : categoriasDisponiveis) {
+            System.out.println("- " + o.getCategoria());
+        }
+
+        System.out.print("Escolha a categoria: ");
+        String catStr = input.nextLine().trim().toUpperCase();
+
+        Categoria categoriaEscolhida = null;
+        try {
+            categoriaEscolhida = Categoria.valueOf(catStr);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Categoria inválida!");
+            return;
+        }
+
+        System.out.print("Novo valor limite do orçamento: ");
+        while (!input.hasNextDouble()) {
+            System.out.println("Digite um número válido!");
+            input.next();
+        }
+        double valorLimite = input.nextDouble();
+        input.nextLine();
+
+        try {
+            Orcamento o = new Orcamento(categoriaEscolhida, valorLimite);
+            o.setIdUsuario(idUsuario);
+
+            orcamentoService.updateOrcamento(o);
+
+            System.out.println("Orçamento alterado com sucesso!");
+        } catch (Exception e) {
+            System.out.println("Erro ao alterar o orçamento: " + e.getMessage());
+        }
+    }
+
 
 
     private void listarTransacoes(int idUsuario) {

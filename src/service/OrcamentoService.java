@@ -2,7 +2,6 @@ package service;
 
 import model.Categoria;
 import model.Orcamento;
-import model.Transacao;
 import util.ConexaoBanco;
 
 import java.sql.*;
@@ -63,4 +62,47 @@ public class OrcamentoService {
 
         return lista;
     }
+
+    public void updateOrcamento(Orcamento o) {
+        String sql = "UPDATE orcamentos SET valorLimite = ? WHERE categoria = ? AND idUsuario = ?";
+
+        try (Connection conn = ConexaoBanco.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setDouble(1, o.getValorLimite());
+            pstmt.setString(2, o.getCategoria().name());
+            pstmt.setInt(3, o.getIdUsuario());
+
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao atualizar o orçamento: " + e.getMessage());
+        }
+    }
+
+    public List<Orcamento> listarCategoriasCadastradas(int idUsuario) {
+        List<Orcamento> lista = new ArrayList<>();
+        String sql = "SELECT id, categoria, valorLimite FROM orcamentos WHERE idUsuario = ?";
+
+        try (Connection conn = ConexaoBanco.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idUsuario);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                Categoria categoria = Categoria.valueOf(rs.getString("categoria"));
+                double limite = rs.getDouble("valorLimite");
+
+                lista.add(new Orcamento(id, categoria, limite));
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao listar orçamentos: " + e.getMessage());
+        }
+
+        return lista;
+    }
+
 }
