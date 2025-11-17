@@ -292,6 +292,7 @@ public class MenuTransacao {
         input.nextLine();
 
         transacaoService.deletarTransacao(id);
-        System.out.println("Transação deletada com sucesso!");
+        System.out.println("Feito!");
+
     }
 }
