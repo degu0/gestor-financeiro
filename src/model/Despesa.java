@@ -18,7 +18,7 @@ public class Despesa extends Transacao {
 
     @Override
     public String getTipo() {
-        return "DESPESA"; 
+        return "DESPESA";
     }
 
     public Categoria getCategoria() {

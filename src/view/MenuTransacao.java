@@ -1,9 +1,7 @@
 package view;
 
-import model.Categoria;
-import model.Despesa;
-import model.Receita;
-import model.Transacao;
+import model.*;
+import service.OrcamentoService;
 import service.TransacaoService;
 
 import java.time.LocalDate;
@@ -14,13 +12,15 @@ public class MenuTransacao {
 
     private Scanner input = new Scanner(System.in);
     private TransacaoService transacaoService = new TransacaoService();
+    private OrcamentoService orcamentoService = new OrcamentoService();
 
     public int exibirMenu() {
         System.out.println("\n=== Transações ===");
         System.out.println("1 - Cadastrar nova transação");
-        System.out.println("2 - Listar transações");
-        System.out.println("3 - Relatório (saldo)");
-        System.out.println("4 - Deletar transação");
+        System.out.println("2 - Cadastrar novo orçamento");
+        System.out.println("3 - Listar transações");
+        System.out.println("4 - Relatório (saldo)");
+        System.out.println("5 - Deletar transação");
         System.out.println("0 - Voltar");
         System.out.print("Escolha a opção: ");
 
@@ -45,14 +45,18 @@ public class MenuTransacao {
                     break;
 
                 case 2:
-                    listarTransacoes(idUsuarioLogado);
+                    cadastrarOrcamento(idUsuarioLogado);
                     break;
 
                 case 3:
-                    gerarRelatorio(idUsuarioLogado);
+                    listarTransacoes(idUsuarioLogado);
                     break;
 
                 case 4:
+                    gerarRelatorio(idUsuarioLogado);
+                    break;
+
+                case 5:
                     deletarTransacao(idUsuarioLogado);
                     break;
 
@@ -119,6 +123,47 @@ public class MenuTransacao {
         System.out.println("Transação cadastrada com sucesso!");
     }
 
+    private void cadastrarOrcamento(int idUsuario) {
+
+        System.out.println("\n=== Cadastro de Orçamento ===");
+
+        System.out.println("Categorias disponíveis:");
+        for (Categoria c : Categoria.values()) {
+            System.out.println("- " + c);
+        }
+
+        System.out.print("Escolha a categoria: ");
+        String catStr = input.nextLine().toUpperCase();
+
+        Categoria categoria;
+        try {
+            categoria = Categoria.valueOf(catStr);
+        } catch (Exception e) {
+            System.out.println("Categoria inválida!");
+            return;
+        }
+
+        System.out.print("Valor limite do orçamento: ");
+        while (!input.hasNextDouble()) {
+            System.out.println("Digite um número válido!");
+            input.next();
+        }
+        double valorLimite = input.nextDouble();
+        input.nextLine();
+
+        try {
+            Orcamento o = new Orcamento(categoria, valorLimite);
+            o.setIdUsuario(idUsuario);
+
+            orcamentoService.salvarNovoOrcamento(o);
+
+            System.out.println("Orçamento cadastrado com sucesso!");
+        } catch (Exception e) {
+            System.out.println("Erro ao cadastrar orçamento: " + e.getMessage());
+        }
+    }
+
+
     private void listarTransacoes(int idUsuario) {
         List<Transacao> lista = transacaoService.listarTodasTransacoesUsuario(idUsuario);
 
@@ -134,9 +179,43 @@ public class MenuTransacao {
     }
 
     private void gerarRelatorio(int idUsuario) {
+        OrcamentoService orcamentoService = new OrcamentoService();
+        List<Orcamento> orcamentos = orcamentoService.listarOrcamentos(idUsuario);
+        List<Transacao> transacoes = transacaoService.listarTodasTransacoesUsuario(idUsuario);
         double saldo = transacaoService.calcularSaldoAtual(idUsuario);
+
         System.out.println("\n=== Relatório ===");
         System.out.println("Saldo atual: R$ " + saldo);
+
+        if (orcamentos.isEmpty()) {
+            System.out.println("Nenhum orçamento cadastrado.");
+            return;
+        }
+
+        for (Orcamento o : orcamentos) {
+
+            double somaDespesas = 0;
+
+            for (Transacao t : transacoes) {
+                if (t instanceof Despesa && ((Despesa) t).getCategoria() == o.getCategoria()) {
+                    somaDespesas += t.getValor();
+                }
+            }
+
+            String acao;
+            if (somaDespesas < o.getValorLimite() * 0.7) {
+                acao = "Dentro do limite";
+            } else if (somaDespesas < o.getValorLimite()) {
+                acao = "Atenção: perto do limite!";
+            } else {
+                acao = "⚠️  Estourou o limite!";
+            }
+
+            System.out.println("\nCategoria: " + o.getCategoria());
+            System.out.println("Total gasto: R$ " + somaDespesas);
+            System.out.println("Orçamento: R$ " + o.getValorLimite());
+            System.out.println("Ação: " + acao);
+        }
     }
 
     private void deletarTransacao(int idUsuario) {

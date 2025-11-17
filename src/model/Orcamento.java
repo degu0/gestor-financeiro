@@ -5,12 +5,14 @@ public class Orcamento {
     private int id;
     private Categoria categoria;
     private double valorLimite;
+    private int idUsuario;
 
     public Orcamento(Categoria categoria, double valorLimite) {
         validarValor(valorLimite);
         this.categoria = categoria;
         this.valorLimite = valorLimite;
     }
+
     public Orcamento(int id, Categoria categoria, double valorLimite) {
         validarValor(valorLimite);
         this.id = id;
@@ -48,6 +50,15 @@ public class Orcamento {
             throw new IllegalArgumentException("O valor limite deve ser positivo.");
         }
     }
+
+    public int getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
 
     @Override
     public String toString() {
